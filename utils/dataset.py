@@ -10,10 +10,11 @@ class StockPrice(Dataset):
         self.data_file = data_file
         self.n_test = n_test
         
-        self.data = pd.read_csv(os.path.join(self.root, self.data_file) +'.SH.csv')
+        self.data = pd.read_csv(os.path.join(self.root, self.data_file) +'.csv') #Will work on data other than Shanghai Exchange.
         self.data['trade_date'] = pd.to_datetime(self.data['trade_date'], format='%Y%m%d')
         self.close = self.data.pop('close').values
-        self.ratechg = self.data['pct_chg'].apply(lambda x:0.01*x).values
+        self.ratechg = self.data['pct_chg'].shift(-1).apply(lambda x:0.01*x).values
+        self.data.dropna(subset=['pct_chg'], inplace=True)
         self.data.drop(columns=['pre_close','change','pct_chg'],inplace=True)
         self.dat = self.data.iloc[:,2:].values
 

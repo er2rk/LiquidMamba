@@ -51,7 +51,6 @@ def validation(args, model, x_test, close, data):
     time = data['trade_date'][-args.n_test:]
     data1 = close[-args.n_test:]
     finalpredicted_stock_price = []
-    pred = close[-args.n_test-1]
     for i in range(args.n_test):
         pred = close[-args.n_test-1+i]*(1+predictions[i])
         finalpredicted_stock_price.append(pred)
@@ -163,7 +162,7 @@ def train(args, model, logger):
 parser = argparse.ArgumentParser()
 parser.add_argument('--use-cuda', default=True,help='CUDA training.')
 parser.add_argument('--seed', type=int, default=1, help='Random seed.')
-parser.add_argument('--epochs', type=int, default=50, help='Number of epochs to train.')
+parser.add_argument('--epochs', type=int, default=20, help='Number of epochs to train.') #OG 50
 parser.add_argument('--lr', type=float, default=1e-2, help='Learning rate.')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--wd', type=float, default=1e-4,help='Weight decay (L2 loss on parameters).')

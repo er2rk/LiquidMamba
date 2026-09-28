@@ -4,3 +4,5 @@ model/__pycache__/
 utils/__pycache__/
 logs/
 wandb/
+result/
+
