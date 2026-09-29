@@ -84,7 +84,8 @@ class LiquidAttention(nn.Module):
 
         attn = torch.matmul(mixed_query_layer, mixed_key_layer.transpose(-2, -1)) 
 
-        p_attn = F.softmax(attn)
+        mask = torch.triu(torch.ones_like(attn, dtype=torch.bool), diagonal=1)
+        p_attn = F.softmax(attn.masked_fill(mask, float('-inf')), dim=-1)
         
         attention_output = (p_attn @ mixed_value_layer)
 
