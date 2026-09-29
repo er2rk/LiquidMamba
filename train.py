@@ -163,12 +163,12 @@ def train(args, model, logger):
 parser = argparse.ArgumentParser()
 parser.add_argument('--use-cuda', default=True,help='CUDA training.')
 parser.add_argument('--seed', type=int, default=1, help='Random seed.')
-parser.add_argument('--epochs', type=int, default=20, help='Number of epochs to train.') #OG 50
+parser.add_argument('--epochs', type=int, default=3, help='Number of epochs to train.') #OG 50
 parser.add_argument('--lr', type=float, default=1e-2, help='Learning rate.')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--wd', type=float, default=1e-4,help='Weight decay (L2 loss on parameters).')
 parser.add_argument('--hidden', type=int, default=32,help='Dimension of representations')
-parser.add_argument('--layer', type=int, default=8,help='Num of layers')
+parser.add_argument('--layer', type=int, default=2,help='Num of layers') #OG 8
 parser.add_argument('--workers', type=int, default=4,help='Num of workers')
 parser.add_argument('--data_root', type=str, default='/AI/MambaLiquid/data/StockPrice/Data/Stocks',help='dataset root')
 parser.add_argument("--max_grad_norm", default=5.0, type=float, help="Max gradient norm.")

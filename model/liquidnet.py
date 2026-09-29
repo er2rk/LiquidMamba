@@ -1,8 +1,9 @@
-import torch
+#import torch
 import torch.nn as nn
+from ncps.torch import CfC
 
 
-class LiquidTimeStep(nn.Module):
+"""class LiquidTimeStep(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(LiquidTimeStep, self).__init__()
         self.input_size = input_size
@@ -14,19 +15,14 @@ class LiquidTimeStep(nn.Module):
     def forward(self, x, h):
         dx = torch.tanh(self.W_in(x) + self.W_h(h))
         h_new = h + (dx - h) / self.tau
-        return h_new
+        return h_new"""
     
 
 class LiquidNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
-        super(LiquidNet, self).__init__()
-        self.hidden_size = hidden_size
-        self.liquid_step = LiquidTimeStep(input_size, hidden_size)
-        self.output_layer = nn.Linear(hidden_size, output_size)
-    
+        super().__init__()
+        self.cfc = CfC(input_size, hidden_size, proj_size=output_size)
+
     def forward(self, x):
-        batch_size = x.size(0)
-        h = torch.zeros(batch_size, self.hidden_size, device=x.device) 
-        h = self.liquid_step(x, h)  
-        output = self.output_layer(h)
-        return output
+        out, _ = self.cfc(x)
+        return out
