@@ -1,4 +1,4 @@
-from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score
+from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score, mean_absolute_percentage_error
 import torch
 import numpy as np
 
@@ -8,7 +8,9 @@ def evaluation_metric(y_test,y_hat):
     RMSE = MSE**0.5
     MAE = mean_absolute_error(y_test,y_hat)
     R2 = r2_score(y_test,y_hat)
-    return MSE, RMSE, MAE, R2
+    MAPE = mean_absolute_percentage_error(y_test, y_hat) * 100
+
+    return MSE, RMSE, MAE, R2, MAPE
 
 def set_seed(seed,cuda):
     np.random.seed(seed)

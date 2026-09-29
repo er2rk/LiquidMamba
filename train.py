@@ -55,14 +55,15 @@ def validation(args, model, x_test, close, data):
         pred = close[-args.n_test-1+i]*(1+predictions[i])
         finalpredicted_stock_price.append(pred)
     
-    MSE, RMSE, MAE, R2 = evaluation_metric(data1, finalpredicted_stock_price)
+    MSE, RMSE, MAE, R2, MAPE = evaluation_metric(data1, finalpredicted_stock_price)
 
     wandb.log({"val/loss": MSE})
     wandb.log({"val/RMSE": RMSE})
     wandb.log({"val/MAE": MAE})
     wandb.log({"val/R2": R2})
+    wandb.log({"val/MAPE": MAPE})
 
-    logger.info("MSE: %.6f || RMSE: %.6f || MAE: %.6f || R2: %.6f" % (MSE, RMSE, MAE, R2))
+    logger.info("MSE: %.6f || RMSE: %.6f || MAE: %.6f || R2: %.6f || MAPE: %.4f%%" % (MSE, RMSE, MAE, R2, MAPE))
 
     dateinf(data['Date'],args.n_test)
     print('MSE RMSE MAE R2')
@@ -114,7 +115,7 @@ def train(args, model, logger):
 
         loss_tot.append(loss.item())
         
-        _, RMSE, MAE, _ = evaluation_metric(pred.cpu().detach(),y.cpu().detach())
+        _, RMSE, MAE, _, _  = evaluation_metric(pred.cpu().detach(),y.cpu().detach())
 
         wandb.log({"train/loss": loss.item()})
         wandb.log({"train/RMSE": RMSE})
