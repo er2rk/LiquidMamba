@@ -48,7 +48,7 @@ def validation(args, model, x_test, close, data):
     predictions = model(x)
     predictions = predictions.cpu().detach().numpy().flatten()
     
-    time = data['trade_date'][-args.n_test:]
+    time = data['Date'][-args.n_test:]
     data1 = close[-args.n_test:]
     finalpredicted_stock_price = []
     for i in range(args.n_test):
@@ -64,7 +64,7 @@ def validation(args, model, x_test, close, data):
 
     logger.info("MSE: %.6f || RMSE: %.6f || MAE: %.6f || R2: %.6f" % (MSE, RMSE, MAE, R2))
 
-    dateinf(data['trade_date'],args.n_test)
+    dateinf(data['Date'],args.n_test)
     print('MSE RMSE MAE R2')
     evaluation_metric(data1, finalpredicted_stock_price)
     plt.figure(figsize=(10, 6))
@@ -172,11 +172,11 @@ parser.add_argument('--workers', type=int, default=4,help='Num of workers')
 parser.add_argument('--data_root', type=str, default='/AI/MambaLiquid/data/StockPrice/Data/Stocks',help='dataset root')
 parser.add_argument("--max_grad_norm", default=5.0, type=float, help="Max gradient norm.")
 parser.add_argument("--root", default='data', type=str, help="wandb name")
-parser.add_argument("--data_file", default='601988', type=str, help="data_file name")
+parser.add_argument("--data_file", default='BZ_F', type=str, help="data_file name")
 parser.add_argument("--wandb_name", default='training', type=str, help="wandb name")
 parser.add_argument('--n_test', type=int, default=300,help='Num of test')
-parser.add_argument('--in_dim', type=int, default=15,help='input dimension')
-parser.add_argument("--data_name", default='Bank of China', type=str, help="dataset name")
+parser.add_argument('--in_dim', type=int, default=5,help='input dimension')#Changed for crude oil.
+parser.add_argument("--data_name", default='Crude Oil', type=str, help="dataset name")
 
 
 if __name__ == "__main__":
