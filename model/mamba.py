@@ -74,7 +74,6 @@ class LiquidAttention(nn.Module):
         self.scale = (config.d_model // config.n_layers) ** -0.5
 
     def forward(self, hidden_states):
-        hidden_states = hidden_states.squeeze(0)
         
         mixed_query_layer = self.query(hidden_states)
         mixed_query_layer = mixed_query_layer * self.scale
@@ -90,7 +89,7 @@ class LiquidAttention(nn.Module):
         attention_output = (p_attn @ mixed_value_layer)
 
         out = self.out(attention_output)
-        out = out.unsqueeze(0)
+    
         return out
 
 class ResidualBlock(nn.Module):
