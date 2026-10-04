@@ -49,7 +49,7 @@ def build_datasets(dataset, window=64, n_val=300, n_test=300):
     df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d")
 
     #All columns in dataset except date are used as features. Should be numerical.
-    feature_columns = [c for c in df.columns if c != "date"]
+    feature_columns = [c for c in df.columns if c not in ("date", "close")]
 
     #Target for day t is the return from day t to day t+1. 
     df["target"] = df["close"].shift(-1) / df["close"] - 1

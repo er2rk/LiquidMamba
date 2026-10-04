@@ -3,5 +3,5 @@ __pycache__/
 model/__pycache__/
 utils/__pycache__/
 logs/
-#The data folder can stay, as we'll mostly work with different types of data and proper naming will make is easy to distinguish datasets.
-
+#Datasets available in our group Google Drive.
+data/ 
