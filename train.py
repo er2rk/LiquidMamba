@@ -68,6 +68,7 @@ def validation(args, model, x_test, close, data):
     dateinf(data['Date'],args.n_test)
     print('MSE RMSE MAE R2')
     evaluation_metric(data1, finalpredicted_stock_price)
+    """
     plt.figure(figsize=(10, 6))
     plt.plot(time, data1, label='Stock Price')
     plt.plot(time, finalpredicted_stock_price, label='Predicted Stock Price')
@@ -76,12 +77,14 @@ def validation(args, model, x_test, close, data):
     plt.legend()
     plt.savefig(f"result/{args.data_name}.pdf", format='pdf', bbox_inches='tight')
     # plt.show()
+    """
+    
 
 
 def train(args, model, logger):
     dataset = StockPrice(args.root, args.data_file, args.n_test)
 
-    x_train, y_train, x_test, close, data = dataset.get_data()
+    x_train, y_train, x_val, y_val,  x_test, close, data = dataset.get_data()
 
     mse = nn.MSELoss()
 
@@ -142,7 +145,7 @@ def train(args, model, logger):
 
         logger.info('This epoch cost %.4f sec'%(time.time()-epoch_time))
     
-    
+    """
     plt.figure(figsize=(8, 5))
     plt.plot(loss_tot, linestyle='-', label='Loss Value')
     plt.xlabel('Epochs')
@@ -151,7 +154,7 @@ def train(args, model, logger):
     plt.grid(True)
     plt.savefig("result/loss_curve.pdf", format='pdf', bbox_inches='tight')
 
-
+    """
     validation(args, model, x_test, close, data)
 
     total_time = time.time() - start_time

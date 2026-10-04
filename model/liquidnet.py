@@ -11,6 +11,6 @@ class LiquidNet(nn.Module):
         super().__init__()
         self.cfc = CfC(input_size, hidden_size, proj_size=output_size)
 
-    def forward(self, x, timespans):
+    def forward(self, x, timespans=None):
         out, _ = self.cfc(x, timespans=timespans)
         return out
