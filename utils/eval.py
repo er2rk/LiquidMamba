@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
+METRIC_NAMES = ["MSE", "RMSE", "MAE", "R2", "MAPE", "DIR"]
 
 def evaluation_metric(y_test, y_hat):
     """Metrics for next-day return forecasts. y_test, y_hat: arrays of returns."""
