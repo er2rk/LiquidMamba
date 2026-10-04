@@ -1,48 +1,82 @@
-# LiquidMamba: Liquid Neural Network Attention Based Mamba For Stock Prediction
+# LiquidMamba
 
-[![Star on GitHub](https://img.shields.io/github/stars/enesdoruk/MambaLiquid.svg?style=social)](https://github.com/enesdoruk/MambaLiquid)
+Next-day return forecasting for financial time series with a hybrid of CfC (Closed-form Continuous-time Neural Networks) and Mamba (Linear-Time Sequence Modeling with Selective State Spaces).
 
-> **Authors:** [Abdullah Enes Doruk](www.linkedin.com/in/enesdrk) and [Ahmet Mete Dokgoz]()
+The project asks whether combining a continuous time recurrent network which can account for irregular time gaps between observations and Mamba's selective memory can forecast next day returns better than baselines, across assets from different classes.
 
-## Abstract
+---
 
-Stock market prediction is a complex challenge due to the dynamic and multifaceted nature of financial data, influenced by factors such as market trends, economic indicators, and investor behavior. Traditional forecasting models often fail to capture these intricate relationships, leading to significant forecasting errors. To address these limitations, this paper presents a novel hybrid model that combines Mamba blocks with self-attention mechanisms derived from liquid neural networks. Our approach leverages the efficient feature extraction capabilities of Mamba blocks while utilizing self-attention to effectively model temporal dependencies and nonlinear interactions within the data. We rigorously evaluated our hybrid model on a comprehensive stock market dataset, encompassing extensive historical price movements and trading volumes, which allowed us to benchmark against various state-of-the-art forecasting methods. Experimental results demonstrate that our hybrid approach significantly outperforms existing techniques in prediction accuracy and robustness to market volatility, highlighting the potential of advanced neural network architectures to enhance financial forecasting.
+## Credits and branches
 
-<p align="center">
-<img src="result/arch.png" width=90% height=70% 
-class="center">
-</p>
+This repository is a fork of Abdullah Enes Doruk and Ahmet Mete Dokgöz's original [LiquidMamba project](https://github.com/enesdoruk/LiquidMamba)
 
-## Installation (Python 3.8.19)
+- main branch contains the original code unchanged, with only a `requirements.txt` added along with `__pycache__` folders added to the .gitignore file for convenience.
+- dev branch contains the work described in this README.
 
-This project tested under pytorch 2.4.1 and CUDA 12.4 versions. However, you can work with CUDA 11x and related Pytorch versions.
+---
 
-The code has been tested running under Python 3.8.19, with the following packages and their dependencies installed:
-```
-numpy==1.16.5
-matplotlib==3.1.0
-sklearn==0.21.3
-pandas==0.25.1
-pytorch==2.4.1
-```
-
-The stock data used in this repository was downloaded from [TuShare](https://tushare.pro/). The stock data on [TuShare](https://tushare.pro/) are with public availability. Some code of the Mamba model is from https://github.com/alxndrTL/mamba.py
-
-
-## Training MambaLiquid
+## Repository structure
 
 ```
-python train.py 
+LiquidMamba/
+|--- main.py               one run: run(dataset, seed), plus single-run settings
+|--- run_batch.py          many runs: every dataset × several seeds, results CSV and summary
+|--- train.py              training loop, prediction, early stopping
+|--- model/
+│   |--- liquidnet.py      LiquidNet: wrapper around the ncps CfC network
+│   |--- hybrid.py         LiquidMamba: the hybrid model
+|--- utils/
+│   |--- dataset.py        windowed dataset, chronological splits, standardization
+│   |--- eval.py           evaluation metrics
+│   |--- log.py            console and file logging
+|--- data/                 prepared datasets, <ASSET>_<type>.csv |
+|--- logs/                 one log file per run or batch         |--- untracked with .gitignore. Make sure to create the folders.
+|--- results/              one results CSV per batch             |
+|--- dataset_convention    rules every dataset must follow
+|--- requirements.txt      pinned dependencies
 ```
 
-## Benchmark Results
+## Setup
 
+```
+pip install -r requirements.txt
+```
 
-<p align="center">
-<img src="result/all_result.png" width=90% height=70% 
-class="center">
-</p>
+## Running
 
-## Acknowledgement
+From the project root:
 
-- We thank the authors of [MambaStock](https://github.com/zshicode/MambaStock) and their open-source codes.
+```
+python main.py        # for one dataset and one seed 
+python run_batch.py   # for every dataset in data/ with multiple seeds
+```
+
+A single run takes about 2 to 5 minutes on CPU, depending on the dataset.
+
+---
+
+## Data
+
+### Sources and preparation
+
+Data is downloaded and turned into features in  [ltsf](https://github.com/er2rk/ltsf)
+
+1. Download: daily OHLCV data from Yahoo Finance via `yfinance`, with prices adjusted for splits and dividends..
+2. Features: two datasets are built from the same raw data in one pass, and cleaned together so they always cover exactly the same dates:
+   - Returns (`<ASSET>_ret.csv`): open, high, low and close relative to the previous close, and the change in log volume.
+   - Technical indicators (`<ASSET>_ti.csv`): one-day return, MACD, Aroon oscillator, RSI, Bollinger band width, and the A/D oscillator. All are computed with TA-Lib.
+
+Volume-based features are left out for assets without meaningful volume (eg. forex, brent).
+
+### Dataset convention
+
+Every dataset should follow the rules in `dataset_convention`:
+
+1. Datasets should be cleaned for missing values before they are fed into the program.
+2. Datasets do not need to be standardized or normalized. Scaling happens in utils/dataset.build_datasets.
+3. Datasets should contain a "date" column in the format (YYYY-MM-DD). This might be generalized later for order book data.
+4. Features at row t should onlt contain information available at the end of day t.
+5. Datasets should specifically contain a day t's closing price at row t, as we are going to be computing our label from it.
+6. The label 'target' at day t is the return from day t to day t+1. Calculated with: y_t = (close_t+1 / close_t) - 1. 
+
+Every column except `date` and `close` is used as a feature. The raw close is only used to compute the label.
