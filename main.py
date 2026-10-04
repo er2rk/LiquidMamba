@@ -55,7 +55,8 @@ def run(dataset, seed):
         log_scores(scores, zero_scores)
         logger.info(f"majority direction baseline {dir_baseline:.4e}")
 
-        results[split] = {"scores": scores, "dir_baseline": dir_baseline}
+        results[split] = {"scores": scores, "dir_baseline": dir_baseline,
+                          "pred_std": float(np.std(y_hat)), "pred_up": float(np.mean(y_hat > 0))}
 
     return results
 
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     #Settings for a single run, used with python main.py and no arguments.
 
     #Name of the dataset to use without .csv extension inside data/
-    dataset = "NVDA_ti"
+    dataset = "EURTRY_ret"
     #Seed, for reproducible results.
     seed = 0
  
