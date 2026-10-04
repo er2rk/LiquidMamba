@@ -41,7 +41,7 @@ def build_datasets(dataset, window=64, n_val=300, n_test=300):
     """Return train, val and test Window, plus the DataFrame for evaluation."""
 
     #Read csv into df.
-    df = pd.read_csv(f"../data/{dataset}.csv")
+    df = pd.read_csv(f"data/{dataset}.csv")
     #Turn col names into lowercase just incase.
     df.columns = df.columns.str.lower()
     #Turn date column into datetime format.

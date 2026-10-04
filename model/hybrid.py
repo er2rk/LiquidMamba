@@ -1,7 +1,7 @@
 import torch.nn as nn
 from mambapy.mamba import MambaBlock, MambaConfig
 
-from liquidnet import LiquidNet
+from model.liquidnet import LiquidNet
 
 
 class HybridBlock(nn.Module):
