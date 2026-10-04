@@ -30,6 +30,8 @@ class LiquidMamba(nn.Module):
         self.blocks = nn.ModuleList([HybridBlock(d_model, cfc_hidden) for _ in range(n_layers)])
         self.norm = nn.RMSNorm(d_model)
         self.head = nn.Linear(d_model, 1)
+        nn.init.zeros_(self.head.weight)
+        nn.init.zeros_(self.head.bias)
 
     def forward(self, x, timespans=None):
         """x: (B, L, in_dim), timespans: (B, L) or None -> (B, L, 1)"""

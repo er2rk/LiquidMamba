@@ -29,7 +29,7 @@ def predict(model, loader):
     return torch.cat(preds).numpy(), torch.cat(targets).numpy()
 
 
-def fit(model, train_loader, val_loader, optimizer, loss_fn, epochs=100, patience=10):
+def fit(model, train_loader, val_loader, optimizer, loss_fn, epochs=49, patience=7):
     """Train with early stopping, then restore the weights with the lowest validation loss."""
     best_loss, best_state, best_epoch, waited = float("inf"), None, 0, 0
 

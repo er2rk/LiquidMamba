@@ -38,7 +38,7 @@ class Window(Dataset):
         return self.features[rows], self.timespans[rows], self.targets[end]
 
 
-def build_datasets(dataset, window=64, n_val=300, n_test=300):
+def build_datasets(dataset, window=64, n_val=500, n_test=500):
     """Return train, val and test Window, plus the DataFrame for evaluation."""
 
     #Read csv into df.
