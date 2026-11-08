@@ -23,8 +23,8 @@ LiquidMamba/
 |--- run_batch.py          many runs: every dataset × several seeds, results CSV and summary
 |--- train.py              training loop, prediction, early stopping
 |--- model/
-│   |--- liquidnet.py      LiquidNet: wrapper around the ncps CfC network
-│   |--- hybrid.py         LiquidMamba: the hybrid model
+│   |--- blocks.py         The mamba and cfc wrappers for LiquidMamba
+│   |--- liquidmamba.py    LiquidMamba: the hybrid model
 |--- utils/
 │   |--- dataset.py        windowed dataset, chronological splits, standardization
 │   |--- eval.py           evaluation metrics
