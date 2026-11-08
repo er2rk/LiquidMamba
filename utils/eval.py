@@ -1,17 +1,19 @@
 import numpy as np
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error, f1_score
 
-METRIC_NAMES = ["MSE", "RMSE", "MAE", "R2", "MAPE", "DIR"]
 
-def evaluation_metric(y_test, y_hat):
-    """Metrics for next-day return forecasts. y_test, y_hat: arrays of returns."""
-    MSE = mean_squared_error(y_test, y_hat)
-    RMSE = MSE ** 0.5
-    MAE = mean_absolute_error(y_test, y_hat)
-    R2 = 1 - MSE / np.mean(y_test ** 2)                           # vs. always predicting 0
-    MAPE = np.mean(np.abs(y_hat - y_test) / (1 + y_test)) * 100   # on reconstructed prices
-    #Flat days have no direction, so they are left out.
-    moved = y_test != 0
-    DIR = np.mean(np.sign(y_hat[moved]) == np.sign(y_test[moved])) # directional accuracy
+def evaluate(y_true, y_hat):
+    """Metrics for next-day return forecasts. y_true, y_hat: arrays of returns."""
+    mse = mean_squared_error(y_true, y_hat)
+    #Flat days have no direction, so they are left out of the direction metrics.
+    moved = y_true != 0
+    up_true, up_hat = y_true[moved] > 0, y_hat[moved] > 0
 
-    return MSE, RMSE, MAE, R2, MAPE, DIR
+    return {"mse": mse,
+            "rmse": mse ** 0.5,
+            "mae": mean_absolute_error(y_true, y_hat),
+            "r2": 1 - mse / np.mean(y_true ** 2),   #vs. always predicting 0
+            "mape": np.mean(np.abs(y_hat - y_true) / (1 + y_true)) * 100,  #on reconstructed prices
+            "dir": np.mean(up_hat == up_true),
+            "f1": f1_score(up_true, up_hat, average="macro", zero_division=0), #average of up and down f1.
+    }
