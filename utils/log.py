@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from utils.eval import METRIC_NAMES
 
 logger = logging.getLogger("liquidmamba")
 
@@ -32,9 +31,3 @@ def setup(console, file, name, log_directory="logs"):
     for handler in handlers:
         handler.setFormatter(formatter)
         logger.addHandler(handler)
-
-
-def log_scores(model_scores, zero_scores):
-    """Log evaluation_metric results for the model next to the zero forecast."""
-    for name, model, zero in zip(METRIC_NAMES, model_scores, zero_scores):
-        logger.info(f"{name:5s} model {model:.4e} | zero {zero:.4e}")

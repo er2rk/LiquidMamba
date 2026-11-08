@@ -9,7 +9,7 @@ def train_one_epoch(model, loader, optimizer, loss_fn, max_grad_norm=1.0):
     model.train()
     total = 0.0
     for x, timespans, y in loader:
-        loss = loss_fn(model(x, timespans)[:, -1, 0], y)   #prediction for each window's last day
+        loss = loss_fn(model(x, timespans), y)   #prediction for each window's last day
         optimizer.zero_grad()
         loss.backward()
         nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
@@ -24,12 +24,12 @@ def predict(model, loader):
     model.eval()
     preds, targets = [], []
     for x, timespans, y in loader:
-        preds.append(model(x, timespans)[:, -1, 0])
+        preds.append(model(x, timespans))
         targets.append(y)
     return torch.cat(preds).numpy(), torch.cat(targets).numpy()
 
 
-def fit(model, train_loader, val_loader, optimizer, loss_fn, epochs=49, patience=7):
+def fit(model, train_loader, val_loader, optimizer, loss_fn, epochs=50, patience=15):
     """Train with early stopping, then restore the weights with the lowest validation loss."""
     best_loss, best_state, best_epoch, waited = float("inf"), None, 0, 0
 
@@ -43,9 +43,9 @@ def fit(model, train_loader, val_loader, optimizer, loss_fn, epochs=49, patience
         else:
             waited += 1
 
-        logger.info(f"epoch {epoch:3d} | train {train_loss:.4e} | val {val_loss:.4e}{'  New Best' if waited == 0 else ''}")
+        logger.info(f"epoch {epoch} | train {train_loss:.8f} | val {val_loss:.8f}{'  New Best' if waited == 0 else ''}")
         if waited >= patience:
             break
 
     model.load_state_dict(best_state)
-    logger.info(f"best model from epoch {best_epoch} | val {best_loss:.4e}")
+    logger.info(f"best model from epoch {best_epoch} | val {best_loss:.8f}")
